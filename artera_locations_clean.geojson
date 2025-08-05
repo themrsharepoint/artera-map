@@ -1,0 +1,941 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.79113,
+          32.806671
+        ]
+      },
+      "properties": {
+        "state": "Alabama",
+        "company": "Miller Pipeline",
+        "union_status": "Union",
+        "contact": "Chad Davis",
+        "phone": "317-695-6024",
+        "email": "Chad.Davis@millerpipeline.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -152.404419,
+          61.370716
+        ]
+      },
+      "properties": {
+        "state": "Alaska",
+        "company": NaN,
+        "union_status": NaN,
+        "contact": NaN,
+        "phone": NaN,
+        "email": NaN
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -111.431221,
+          33.729759
+        ]
+      },
+      "properties": {
+        "state": "Arizona",
+        "company": NaN,
+        "union_status": NaN,
+        "contact": NaN,
+        "phone": NaN,
+        "email": NaN
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -92.373123,
+          34.969704
+        ]
+      },
+      "properties": {
+        "state": "Arkansas",
+        "company": "Southeast Connections ",
+        "union_status": "Non-Union",
+        "contact": "Kyle Ormsby ",
+        "phone": "770-527-1299",
+        "email": "kyle.ormsby@artera.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -92.373123,
+          34.969704
+        ]
+      },
+      "properties": {
+        "state": "Arkansas",
+        "company": "Miller Pipeline",
+        "union_status": "Union",
+        "contact": "Chad Davis",
+        "phone": "317-695-6024",
+        "email": "Chad.Davis@millerpipeline.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -119.681564,
+          36.116203
+        ]
+      },
+      "properties": {
+        "state": "California",
+        "company": "Miller Pipeline",
+        "union_status": "Union",
+        "contact": "Kevin Miller",
+        "phone": "317-439-2167",
+        "email": "Kevin.Miller@millerpipeline.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -105.311104,
+          39.059811
+        ]
+      },
+      "properties": {
+        "state": "Colorado",
+        "company": "Southeast Connections ",
+        "union_status": "Non-Union",
+        "contact": "Kyle Ormsby ",
+        "phone": "770-527-1299",
+        "email": "kyle.ormsby@artera.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.755371,
+          41.597782
+        ]
+      },
+      "properties": {
+        "state": "Connecticut",
+        "company": "DDS Companies",
+        "union_status": "Non-Union",
+        "contact": "Michael Fallat",
+        "phone": "585-370-5966",
+        "email": "mfallat@ddscompanies.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.507141,
+          39.318523
+        ]
+      },
+      "properties": {
+        "state": "Delaware",
+        "company": "Miller Pipeline",
+        "union_status": "Union",
+        "contact": "Frank Bracht",
+        "phone": "732-496-3942",
+        "email": "Frank.Bracht@millerpipeline.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.686783,
+          27.766279
+        ]
+      },
+      "properties": {
+        "state": "Florida",
+        "company": "Miller Pipeline",
+        "union_status": "Union",
+        "contact": "Chad Davis",
+        "phone": "317-695-6024",
+        "email": "Chad.Davis@millerpipeline.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.643074,
+          33.040619
+        ]
+      },
+      "properties": {
+        "state": "Georgia",
+        "company": "Southeast Connections ",
+        "union_status": "Non-Union",
+        "contact": "Kyle Ormsby ",
+        "phone": "770-527-1299",
+        "email": "kyle.ormsby@artera.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -157.498337,
+          21.094318
+        ]
+      },
+      "properties": {
+        "state": "Hawaii",
+        "company": NaN,
+        "union_status": NaN,
+        "contact": NaN,
+        "phone": NaN,
+        "email": NaN
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -114.478828,
+          44.240459
+        ]
+      },
+      "properties": {
+        "state": "Idaho",
+        "company": "Otis Minnesota ",
+        "union_status": "Union",
+        "contact": "Christopher Haux",
+        "phone": "612-750-6727",
+        "email": "christopher.haux@otisminnesota.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -88.986137,
+          40.349457
+        ]
+      },
+      "properties": {
+        "state": "Illinois",
+        "company": "Otis Minnesota ",
+        "union_status": "Union",
+        "contact": "Christopher Haux",
+        "phone": "612-750-6727",
+        "email": "christopher.haux@otisminnesota.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -93.210526,
+          42.011539
+        ]
+      },
+      "properties": {
+        "state": "Iowa",
+        "company": "Otis Minnesota ",
+        "union_status": "Union",
+        "contact": "Christopher Haux",
+        "phone": "612-750-6727",
+        "email": "Christopher.Haux@otisminnesota.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -96.726486,
+          38.5266
+        ]
+      },
+      "properties": {
+        "state": "Kansas",
+        "company": "Southeast Connections ",
+        "union_status": "Non-Union",
+        "contact": "Kyle Ormsby ",
+        "phone": "770-527-1299",
+        "email": "kyle.ormsby@artera.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.670067,
+          37.66814
+        ]
+      },
+      "properties": {
+        "state": "Kentucky",
+        "company": "Southeast Connections ",
+        "union_status": "Non-Union",
+        "contact": "Kyle Ormsby ",
+        "phone": "770-527-1299",
+        "email": "kyle.ormsby@artera.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -91.867805,
+          31.169546
+        ]
+      },
+      "properties": {
+        "state": "Louisiana",
+        "company": "Southeast Connections ",
+        "union_status": "Non-Union",
+        "contact": "Kyle Ormsby ",
+        "phone": "770-527-1299",
+        "email": "kyle.ormsby@artera.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -69.381927,
+          44.693947
+        ]
+      },
+      "properties": {
+        "state": "Maine",
+        "company": NaN,
+        "union_status": " ",
+        "contact": NaN,
+        "phone": NaN,
+        "email": NaN
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.802101,
+          39.063946
+        ]
+      },
+      "properties": {
+        "state": "Maryland",
+        "company": "Southeast Connections ",
+        "union_status": "Non-Union",
+        "contact": "Kyle Ormsby ",
+        "phone": "770-527-1299",
+        "email": "kyle.ormsby@artera.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.530106,
+          42.230171
+        ]
+      },
+      "properties": {
+        "state": "Massachusetts",
+        "company": "DDS Companies",
+        "union_status": "Non-Union",
+        "contact": "Michael Fallat",
+        "phone": "585-370-5966",
+        "email": "mfallat@ddscompanies.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.536095,
+          43.326618
+        ]
+      },
+      "properties": {
+        "state": "Michigan",
+        "company": "Otis Minnesota ",
+        "union_status": "Union",
+        "contact": "Christopher Haux",
+        "phone": "612-750-6727",
+        "email": "christopher.haux@otisminnesota.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -93.900192,
+          45.694454
+        ]
+      },
+      "properties": {
+        "state": "Minnesota",
+        "company": "Otis Minnesota ",
+        "union_status": "Union",
+        "contact": "Christopher Haux",
+        "phone": "612-750-6727",
+        "email": "christopher.haux@otisminnesota.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -89.678696,
+          32.741646
+        ]
+      },
+      "properties": {
+        "state": "Mississippi",
+        "company": "Southeast Connections ",
+        "union_status": "Non-Union",
+        "contact": "Kyle Ormsby ",
+        "phone": "770-527-1299",
+        "email": "kyle.ormsby@artera.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -89.678696,
+          32.741646
+        ]
+      },
+      "properties": {
+        "state": "Mississippi",
+        "company": "Miller Pipeline",
+        "union_status": "Union",
+        "contact": "Chad Davis",
+        "phone": "317-695-6024",
+        "email": "Chad.Davis@millerpipeline.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -92.288368,
+          38.456085
+        ]
+      },
+      "properties": {
+        "state": "Missouri",
+        "company": "Southeast Connections ",
+        "union_status": "Non-Union",
+        "contact": "Kyle Ormsby ",
+        "phone": "770-527-1299",
+        "email": "kyle.ormsby@artera.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -92.288368,
+          38.456085
+        ]
+      },
+      "properties": {
+        "state": "Missouri",
+        "company": "Miller Pipeline",
+        "union_status": "Union",
+        "contact": "Chad Davis",
+        "phone": "317-695-6024",
+        "email": "Chad.Davis@millerpipeline.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -110.454353,
+          46.921925
+        ]
+      },
+      "properties": {
+        "state": "Montana",
+        "company": "Otis Minnesota ",
+        "union_status": "Union",
+        "contact": "Christopher Haux",
+        "phone": "612-750-6727",
+        "email": "christopher.haux@otisminnesota.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -98.268082,
+          41.12537
+        ]
+      },
+      "properties": {
+        "state": "Nebraska",
+        "company": NaN,
+        "union_status": NaN,
+        "contact": NaN,
+        "phone": NaN,
+        "email": NaN
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -117.055374,
+          38.313515
+        ]
+      },
+      "properties": {
+        "state": "Nevada",
+        "company": NaN,
+        "union_status": NaN,
+        "contact": NaN,
+        "phone": NaN,
+        "email": NaN
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.563896,
+          43.452492
+        ]
+      },
+      "properties": {
+        "state": "New Hampshire",
+        "company": "Feeney Brothers",
+        "union_status": "Non-Union",
+        "contact": "Jeff Towle",
+        "phone": "781-379-1128",
+        "email": "Jeff.Towle@FeeneyBrothers.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.521011,
+          40.298904
+        ]
+      },
+      "properties": {
+        "state": "New Jersey",
+        "company": "Miller Pipeline",
+        "union_status": "Union",
+        "contact": "Frank Bracht",
+        "phone": "732-496-3942",
+        "email": "Frank.Bracht@millerpipeline.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -106.248482,
+          34.840515
+        ]
+      },
+      "properties": {
+        "state": "New Mexico",
+        "company": "Southeast Connections ",
+        "union_status": "Non-Union",
+        "contact": "Kyle Ormsby ",
+        "phone": "770-527-1299",
+        "email": "kyle.ormsby@artera.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -74.948051,
+          42.165726
+        ]
+      },
+      "properties": {
+        "state": "New York",
+        "company": "Miller Pipeline",
+        "union_status": "Union",
+        "contact": "Frank Bracht",
+        "phone": "732-496-3942",
+        "email": "Frank.Bracht@millerpipeline.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.806419,
+          35.630066
+        ]
+      },
+      "properties": {
+        "state": "North Carolina",
+        "company": "Miller Pipeline",
+        "union_status": "Union",
+        "contact": "Chad Davis",
+        "phone": "317-695-6024",
+        "email": "Chad.Davis@millerpipeline.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -99.784012,
+          47.528912
+        ]
+      },
+      "properties": {
+        "state": "North Dakota",
+        "company": "Otis Minnesota ",
+        "union_status": "Union",
+        "contact": "Christopher Haux",
+        "phone": "612-750-6727",
+        "email": "christopher.haux@otisminnesota.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.764915,
+          40.388783
+        ]
+      },
+      "properties": {
+        "state": "Ohio",
+        "company": "DDS Companies",
+        "union_status": "Non-Union",
+        "contact": "Michael Fallat",
+        "phone": "585-370-5966",
+        "email": "mfallat@ddscompanies.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -96.928917,
+          35.565342
+        ]
+      },
+      "properties": {
+        "state": "Oklahoma",
+        "company": "Southeast Connections ",
+        "union_status": "Non-Union",
+        "contact": "Kyle Ormsby ",
+        "phone": "770-527-1299",
+        "email": "kyle.ormsby@artera.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.070938,
+          44.572021
+        ]
+      },
+      "properties": {
+        "state": "Oregon",
+        "company": NaN,
+        "union_status": NaN,
+        "contact": NaN,
+        "phone": NaN,
+        "email": NaN
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.209755,
+          40.590752
+        ]
+      },
+      "properties": {
+        "state": "Pennsylvania",
+        "company": "Otis Minnesota ",
+        "union_status": "Union",
+        "contact": "Keith Miller",
+        "phone": "317-439-1039",
+        "email": "keith.miller@otisminnesota.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.51178,
+          41.680893
+        ]
+      },
+      "properties": {
+        "state": "Rhode Island",
+        "company": "DDS Companies",
+        "union_status": "Non-Union",
+        "contact": "Michael Fallat",
+        "phone": "585-370-5966",
+        "email": "mfallat@ddscompanies.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -80.945007,
+          33.856892
+        ]
+      },
+      "properties": {
+        "state": "South Carolina",
+        "company": "Miller Pipeline",
+        "union_status": "Union",
+        "contact": "Chad Davis",
+        "phone": "317-695-6024",
+        "email": "Chad.Davis@millerpipeline.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -99.438828,
+          44.299782
+        ]
+      },
+      "properties": {
+        "state": "South Dakota",
+        "company": "Otis Minnesota ",
+        "union_status": "Union",
+        "contact": "Christopher Haux",
+        "phone": "612-750-6727",
+        "email": "christopher.haux@otisminnesota.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -86.692345,
+          35.747845
+        ]
+      },
+      "properties": {
+        "state": "Tennessee",
+        "company": "Southeast Connections ",
+        "union_status": "Non-Union",
+        "contact": "Matthew Thompson ",
+        "phone": "336-676-3737",
+        "email": "mthompson@seconnections.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -97.563461,
+          31.054487
+        ]
+      },
+      "properties": {
+        "state": "Texas",
+        "company": "Miller Pipeline",
+        "union_status": "Union",
+        "contact": "Dale Anderson",
+        "phone": "302-598-5908",
+        "email": "Dale.Anderson@millerpipeline.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -111.862434,
+          40.150032
+        ]
+      },
+      "properties": {
+        "state": "Utah",
+        "company": NaN,
+        "union_status": NaN,
+        "contact": NaN,
+        "phone": NaN,
+        "email": NaN
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.710686,
+          44.045876
+        ]
+      },
+      "properties": {
+        "state": "Vermont",
+        "company": "DDS Companies",
+        "union_status": "Non-Union",
+        "contact": "Michael Fallat",
+        "phone": "585-370-5966",
+        "email": "mfallat@ddscompanies.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -78.169968,
+          37.769337
+        ]
+      },
+      "properties": {
+        "state": "Virginia",
+        "company": "Otis Minnesota ",
+        "union_status": "Union",
+        "contact": "Keith Miller",
+        "phone": "317-439-1039",
+        "email": "keith.miller@otisminnesota.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.490494,
+          47.400902
+        ]
+      },
+      "properties": {
+        "state": "Washington",
+        "company": NaN,
+        "union_status": NaN,
+        "contact": NaN,
+        "phone": NaN,
+        "email": NaN
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -80.954453,
+          38.491226
+        ]
+      },
+      "properties": {
+        "state": "West Virginia",
+        "company": "Southeast Connections ",
+        "union_status": "Non-Union",
+        "contact": "Kyle Ormsby ",
+        "phone": "770-527-1299",
+        "email": "kyle.ormsby@artera.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -89.616508,
+          44.268543
+        ]
+      },
+      "properties": {
+        "state": "Wisconsin",
+        "company": "Miller Pipeline",
+        "union_status": "Union",
+        "contact": "Chad Davis",
+        "phone": "317-695-6024",
+        "email": "Chad.Davis@millerpipeline.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -107.30249,
+          42.755966
+        ]
+      },
+      "properties": {
+        "state": "Wyoming",
+        "company": NaN,
+        "union_status": NaN,
+        "contact": NaN,
+        "phone": NaN,
+        "email": NaN
+      }
+    }
+  ]
+}
