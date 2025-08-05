@@ -30,11 +30,11 @@
       },
       "properties": {
         "state": "Alaska",
-        "company": NaN,
-        "union_status": NaN,
-        "contact": NaN,
-        "phone": NaN,
-        "email": NaN
+        "company": "Unknown",
+        "union_status": "Unknown",
+        "contact": "Unknown",
+        "phone": "Unknown",
+        "email": "Unknown"
       }
     },
     {
@@ -48,11 +48,11 @@
       },
       "properties": {
         "state": "Arizona",
-        "company": NaN,
-        "union_status": NaN,
-        "contact": NaN,
-        "phone": NaN,
-        "email": NaN
+        "company": "Unknown",
+        "union_status": "Unknown",
+        "contact": "Unknown",
+        "phone": "Unknown",
+        "email": "Unknown"
       }
     },
     {
@@ -210,11 +210,11 @@
       },
       "properties": {
         "state": "Hawaii",
-        "company": NaN,
-        "union_status": NaN,
-        "contact": NaN,
-        "phone": NaN,
-        "email": NaN
+        "company": "Unknown",
+        "union_status": "Unknown",
+        "contact": "Unknown",
+        "phone": "Unknown",
+        "email": "Unknown"
       }
     },
     {
@@ -336,11 +336,11 @@
       },
       "properties": {
         "state": "Maine",
-        "company": NaN,
+        "company": "Unknown",
         "union_status": " ",
-        "contact": NaN,
-        "phone": NaN,
-        "email": NaN
+        "contact": "Unknown",
+        "phone": "Unknown",
+        "email": "Unknown"
       }
     },
     {
@@ -516,11 +516,11 @@
       },
       "properties": {
         "state": "Nebraska",
-        "company": NaN,
-        "union_status": NaN,
-        "contact": NaN,
-        "phone": NaN,
-        "email": NaN
+        "company": "Unknown",
+        "union_status": "Unknown",
+        "contact": "Unknown",
+        "phone": "Unknown",
+        "email": "Unknown"
       }
     },
     {
@@ -534,11 +534,11 @@
       },
       "properties": {
         "state": "Nevada",
-        "company": NaN,
-        "union_status": NaN,
-        "contact": NaN,
-        "phone": NaN,
-        "email": NaN
+        "company": "Unknown",
+        "union_status": "Unknown",
+        "contact": "Unknown",
+        "phone": "Unknown",
+        "email": "Unknown"
       }
     },
     {
@@ -696,11 +696,11 @@
       },
       "properties": {
         "state": "Oregon",
-        "company": NaN,
-        "union_status": NaN,
-        "contact": NaN,
-        "phone": NaN,
-        "email": NaN
+        "company": "Unknown",
+        "union_status": "Unknown",
+        "contact": "Unknown",
+        "phone": "Unknown",
+        "email": "Unknown"
       }
     },
     {
@@ -822,11 +822,11 @@
       },
       "properties": {
         "state": "Utah",
-        "company": NaN,
-        "union_status": NaN,
-        "contact": NaN,
-        "phone": NaN,
-        "email": NaN
+        "company": "Unknown",
+        "union_status": "Unknown",
+        "contact": "Unknown",
+        "phone": "Unknown",
+        "email": "Unknown"
       }
     },
     {
@@ -876,11 +876,11 @@
       },
       "properties": {
         "state": "Washington",
-        "company": NaN,
-        "union_status": NaN,
-        "contact": NaN,
-        "phone": NaN,
-        "email": NaN
+        "company": "Unknown",
+        "union_status": "Unknown",
+        "contact": "Unknown",
+        "phone": "Unknown",
+        "email": "Unknown"
       }
     },
     {
@@ -930,11 +930,11 @@
       },
       "properties": {
         "state": "Wyoming",
-        "company": NaN,
-        "union_status": NaN,
-        "contact": NaN,
-        "phone": NaN,
-        "email": NaN
+        "company": "Unknown",
+        "union_status": "Unknown",
+        "contact": "Unknown",
+        "phone": "Unknown",
+        "email": "Unknown"
       }
     }
   ]
