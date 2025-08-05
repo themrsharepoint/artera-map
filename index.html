@@ -1,69 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Artera Map</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <title>Artera Company Map</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
   <style>
-    body { margin: 0; padding: 0; }
+    body, html { margin: 0; padding: 0; height: 100%; }
     #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    .mapboxgl-popup-content {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
 <div id="map"></div>
 <script>
+  // Your Mapbox public token (with appropriate domain restrictions)
   mapboxgl.accessToken = 'pk.eyJ1IjoibXJzaGFyZXBvaW50IiwiYSI6ImNtZHlwcWdmeTA0cG4yam9peGhhNXg0YXQifQ.JnHCLctXF8nC6rOGmWYd5A';
 
+  // Initialize the map
   const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v12',
-    center: [-95.7129, 37.0902], // Center over the U.S.
+    center: [-95.7129, 37.0902], // Center over the USA
     zoom: 3.5
   });
 
   map.on('load', () => {
-    map.addSource('artera', {
+    // Add the GeoJSON source from your cleaned Excel-derived file
+    map.addSource('locations', {
       type: 'geojson',
-      data: 'https://themrsharepoint.github.io/artera-map/artera_locations_clean.geojson'
+      data: 'artera_from_excel.geojson'  // <-- Updated filename
     });
 
+    // Add a circle layer for points
     map.addLayer({
-      id: 'artera-points',
+      id: 'company-locations',
       type: 'circle',
-      source: 'artera',
+      source: 'locations',
       paint: {
         'circle-radius': 6,
-        'circle-color': '#007cbf'
+        'circle-color': '#007cbf',
+        'circle-stroke-width': 1,
+        'circle-stroke-color': '#fff'
       }
     });
 
-    // Add popups on click
-    map.on('click', 'artera-points', (e) => {
-      const props = e.features[0].properties;
-      const coordinates = e.features[0].geometry.coordinates.slice();
-
-      const popupContent = `
-        <strong>Company:</strong> ${props.company}<br>
-        <strong>Union:</strong> ${props.union}<br>
-        <strong>Contact:</strong> ${props.contact}<br>
-        <strong>Email:</strong> ${props.email}<br>
-        <strong>Phone:</strong> ${props.phone}<br>
-        <strong>State:</strong> ${props.state}
+    // Popup on click, with clickable email
+    map.on('click', 'company-locations', (e) => {
+      const p = e.features[0].properties;
+      const html = `
+        <strong>Company:</strong> ${p.company}<br>
+        <strong>Union:</strong> ${p.union}<br>
+        <strong>Contact:</strong> ${p.contact}<br>
+        <strong>Phone:</strong> ${p.phone}<br>
+        <strong>Email:</strong> <a href="mailto:${p.email}">${p.email}</a><br>
+        <strong>State:</strong> ${p.state}
       `;
-
       new mapboxgl.Popup()
-        .setLngLat(coordinates)
-        .setHTML(popupContent)
+        .setLngLat(e.lngLat)
+        .setHTML(html)
         .addTo(map);
     });
 
-    // Cursor changes on hover
-    map.on('mouseenter', 'artera-points', () => {
+    // Change cursor to pointer on hover
+    map.on('mouseenter', 'company-locations', () => {
       map.getCanvas().style.cursor = 'pointer';
     });
-    map.on('mouseleave', 'artera-points', () => {
+    map.on('mouseleave', 'company-locations', () => {
       map.getCanvas().style.cursor = '';
     });
   });
