@@ -4,12 +4,15 @@
   <meta charset="utf-8" />
   <title>Artera Company Map</title>
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+  <script src="https://api/mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
   <style>
     body, html { margin:0; padding:0; height:100%; }
     #map { position:absolute; top:0; bottom:0; width:100%; }
-    .mapboxgl-popup-content { font:13px/1.4 Arial, sans-serif; }
+    .mapboxgl-popup-content { font:14px/1.5 Arial, sans-serif; }
+    .popup-table { border-collapse: collapse; width: 100%; }
+    .popup-table td { vertical-align: top; padding: 2px 4px; }
+    .popup-table dt { font-weight: bold; padding-right: 8px; }
   </style>
 </head>
 <body>
@@ -18,13 +21,9 @@
   // Your Mapbox public access token
   mapboxgl.accessToken = 'pk.eyJ1IjoibXJzaGFyZXBvaW50IiwiYSI6ImNtZHlwcWdmeTA0cG4yam9peGhhNXg0YXQifQ.JnHCLctXF8nC6rOGmWYd5A';
 
-  // Bind map to continental USA
-  const usaBounds = [
-    [-125.0, 24.396308],  // SW
-    [-66.885444, 49.384358] // NE
-  ];
+  // Lock to continental USA
+  const usaBounds = [[-125.0, 24.396308], [-66.885444, 49.384358]];
 
-  // Initialize the map
   const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v11',
@@ -36,63 +35,51 @@
 
   map.on('load', () => {
     fetch('locationdata.geojson')
-      .then(response => response.json())
+      .then(res => res.json())
       .then(data => {
-        // Jitter points so multiple companies per state don't overlap
-        const groups = {};
-        data.features.forEach(feature => {
-          const state = feature.properties.state;
-          (groups[state] = groups[state] || []).push(feature);
+        // Jitter overlapping points
+        const groups = {}; data.features.forEach(f => {
+          (groups[f.properties.state] = groups[f.properties.state]||[]).push(f);
         });
-        Object.values(groups).forEach(features => {
-          const count = features.length;
-          features.forEach((feature, i) => {
-            const [lon, lat] = feature.geometry.coordinates;
-            const radius = 0.3; // degrees to jitter
-            const angle = (2 * Math.PI * i) / count;
-            feature.geometry.coordinates = [
-              lon + Math.cos(angle) * radius,
-              lat + Math.sin(angle) * radius
-            ];
+        Object.values(groups).forEach(arr => {
+          const n = arr.length;
+          arr.forEach((f,i) => {
+            const [lon, lat] = f.geometry.coordinates;
+            const r = 0.2; const theta = 2 * Math.PI * i / n;
+            f.geometry.coordinates = [lon + Math.cos(theta)*r, lat + Math.sin(theta)*r];
           });
         });
 
-        // Add the jittered GeoJSON source
-        map.addSource('locations', {
-          type: 'geojson',
-          data: data
-        });
-
-        // Add circle layer for company points
+        map.addSource('locations', { type: 'geojson', data });
         map.addLayer({
-          id: 'company-points',
-          type: 'circle',
-          source: 'locations',
+          id: 'company-points', type: 'circle', source: 'locations',
           paint: {
             'circle-radius': 6,
             'circle-color': '#007cbf',
-            'circle-stroke-width': 1,
-            'circle-stroke-color': '#ffffff'
+            'circle-stroke-color': '#ffffff',
+            'circle-stroke-width': 1
           }
         });
 
-        // Popup on click
-        map.on('click', 'company-points', (e) => {
+        // Popups
+        map.on('click', 'company-points', e => {
           const p = e.features[0].properties;
-          new mapboxgl.Popup()
+          const html = `
+            <table class="popup-table">
+              <tr><td><strong>Company:</strong></td><td>${p.company}</td></tr>
+              <tr><td><strong>Union:</strong></td><td>${p.union}</td></tr>
+              <tr><td><strong>Contact:</strong></td><td>${p.contact}</td></tr>
+              <tr><td><strong>Phone:</strong></td><td>${p.phone}</td></tr>
+              <tr><td><strong>Email:</strong></td><td><a href=\"mailto:${p.email}\">${p.email}</a></td></tr>
+              <tr><td><strong>State:</strong></td><td>${p.state}</td></tr>
+            </table>
+          `;
+          new mapboxgl.Popup({ maxWidth: '300px' })
             .setLngLat(e.lngLat)
-            .setHTML(
-              `<strong>Company:</strong> ${p.company}<br>` +
-              `<strong>Union:</strong> ${p.union}<br>` +
-              `<strong>Contact:</strong> ${p.contact}<br>` +
-              `<strong>Phone:</strong> ${p.phone}<br>` +
-              `<strong>Email:</strong> <a href=\"mailto:${p.email}\">${p.email}</a><br>` +
-              `<strong>State:</strong> ${p.state}`
-            )
+            .setHTML(html)
             .addTo(map);
         });
 
-        // Change cursor on hover
         map.on('mouseenter', 'company-points', () => {
           map.getCanvas().style.cursor = 'pointer';
         });
