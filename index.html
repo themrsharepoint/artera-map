@@ -126,14 +126,38 @@
               const showU = unionChk.checked;
               const showN = nonUnionChk.checked;
               const selected = Array.from(companySelect.selectedOptions).map(o => o.value);
-              const filters = ['all',
-                ['match', ['get', 'union'],
-                  showU && 'Union',
-                  showN && 'Non-Union',
-                  false
-                ],
-                ['in', ['get', 'company'], ['literal', selected]]
-              ];
+              
+              // Build union status filter
+              let statusFilter;
+              if (showU && showN) {
+                // both checked = no status filter
+                statusFilter = null;
+              } else if (showU) {
+                statusFilter = ['==', ['get','union'], 'Union'];
+              } else if (showN) {
+                statusFilter = ['==', ['get','union'], 'Non-Union'];
+              } else {
+                // none checked: match nothing
+                statusFilter = ['==', ['get','union'], '__NONE__'];
+              }
+
+              // Build company filter
+              let companyFilter;
+              const totalCompanies = companySelect.options.length;
+              if (selected.length === 0) {
+                // none selected: match nothing
+                companyFilter = ['==', ['get','company'], '__NONE__'];
+              } else if (selected.length === totalCompanies) {
+                // all selected = no company filter
+                companyFilter = null;
+              } else {
+                companyFilter = ['in', ['get','company'], ['literal', selected]];
+              }
+
+              // Combine filters
+              const filters = ['all'];
+              if (statusFilter) filters.push(statusFilter);
+              if (companyFilter) filters.push(companyFilter);
               map.setFilter('points', filters);
             }
             unionChk.addEventListener('change', applyFilters);
