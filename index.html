@@ -15,60 +15,46 @@
 <body>
 <div id="map"></div>
 <script>
-  // 1) your Mapbox token
   mapboxgl.accessToken = 'pk.eyJ1IjoibXJzaGFyZXBvaW50IiwiYSI6ImNtZHlwcWdmeTA0cG4yam9peGhhNXg0YXQifQ.JnHCLctXF8nC6rOGmWYd5A';
 
-  // 2) init map centered on USA
   const map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v12',
+    style: 'mapbox://styles/mapbox/streets-v11',   // ← use v11 here
     center: [-95.7129, 37.0902],
     zoom: 3.5
   });
 
   map.on('load', () => {
-    // 3) load your GeoJSON
-    fetch('locationdata.geojson') // <-- renamed file
+    fetch('locationdata.geojson')
       .then(r => r.json())
       .then(data => {
-        // 4) jitter points for states with multiple companies
+        // jitter multiple points in the same state
         const groups = {};
         data.features.forEach(f => {
-          const s = f.properties.state;
-          (groups[s] = groups[s]||[]).push(f);
+          (groups[f.properties.state] = groups[f.properties.state]||[]).push(f);
         });
-        Object.values(groups).forEach(features => {
-          const n = features.length;
-          features.forEach((f,i) => {
-            const [lon, lat] = f.geometry.coordinates;
-            const radius = 0.25;
-            const angle = 2*Math.PI * i / n;
-            f.geometry.coordinates = [
-              lon + Math.cos(angle)*radius,
-              lat + Math.sin(angle)*radius
-            ];
+        Object.values(groups).forEach(arr => {
+          const n = arr.length;
+          arr.forEach((f,i) => {
+            const [lon,lat]=f.geometry.coordinates;
+            const r = 0.25, θ=2*Math.PI*i/n;
+            f.geometry.coordinates=[lon+Math.cos(θ)*r,lat+Math.sin(θ)*r];
           });
         });
 
-        // 5) add jittered source
-        map.addSource('locations', { type: 'geojson', data });
-
-        // 6) add circle layer
+        map.addSource('locations',{ type:'geojson', data });
         map.addLayer({
-          id: 'company-points',
-          type: 'circle',
-          source: 'locations',
-          paint: {
-            'circle-radius': 6,
-            'circle-color': '#007cbf',
-            'circle-stroke-width': 1,
-            'circle-stroke-color': '#fff'
+          id:'company-points', type:'circle', source:'locations',
+          paint:{
+            'circle-radius':6,
+            'circle-color':'#007cbf',
+            'circle-stroke-width':1,
+            'circle-stroke-color':'#fff'
           }
         });
 
-        // 7) popups on click
-        map.on('click', 'company-points', e => {
-          const p = e.features[0].properties;
+        map.on('click','company-points',e=>{
+          const p=e.features[0].properties;
           new mapboxgl.Popup()
             .setLngLat(e.lngLat)
             .setHTML(`
@@ -82,11 +68,10 @@
             .addTo(map);
         });
 
-        // 8) pointer cursor
-        map.on('mouseenter','company-points',() => map.getCanvas().style.cursor='pointer');
-        map.on('mouseleave','company-points',() => map.getCanvas().style.cursor='');
+        map.on('mouseenter','company-points',()=>map.getCanvas().style.cursor='pointer');
+        map.on('mouseleave','company-points',()=>map.getCanvas().style.cursor='');
       })
-      .catch(err => console.error('GeoJSON load error:', err));
+      .catch(err=>console.error('GeoJSON load error:', err));
   });
 </script>
 </body>
