@@ -7,73 +7,86 @@
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
   <style>
-    body, html { margin: 0; padding: 0; height: 100%; }
-    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
-    .mapboxgl-popup-content {
-      font-family: Arial, sans-serif;
-      font-size: 13px;
-      line-height: 1.4;
-    }
+    body, html { margin:0; padding:0; height:100%; }
+    #map { position:absolute; top:0; bottom:0; width:100%; }
+    .mapboxgl-popup-content { font:13px/1.4 Arial, sans-serif; }
   </style>
 </head>
 <body>
 <div id="map"></div>
 <script>
-  // Your Mapbox public token (with appropriate domain restrictions)
+  // 1) your Mapbox token
   mapboxgl.accessToken = 'pk.eyJ1IjoibXJzaGFyZXBvaW50IiwiYSI6ImNtZHlwcWdmeTA0cG4yam9peGhhNXg0YXQifQ.JnHCLctXF8nC6rOGmWYd5A';
 
-  // Initialize the map
+  // 2) init map centered on USA
   const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v12',
-    center: [-95.7129, 37.0902], // Center over the USA
+    center: [-95.7129, 37.0902],
     zoom: 3.5
   });
 
   map.on('load', () => {
-    // Add the GeoJSON source from your cleaned Excel-derived file
-    map.addSource('locations', {
-      type: 'geojson',
-      data: 'artera_from_excel.geojson'  // <-- Updated filename
-    });
+    // 3) load your GeoJSON
+    fetch('locationdata.geojson') // <-- renamed file
+      .then(r => r.json())
+      .then(data => {
+        // 4) jitter points for states with multiple companies
+        const groups = {};
+        data.features.forEach(f => {
+          const s = f.properties.state;
+          (groups[s] = groups[s]||[]).push(f);
+        });
+        Object.values(groups).forEach(features => {
+          const n = features.length;
+          features.forEach((f,i) => {
+            const [lon, lat] = f.geometry.coordinates;
+            const radius = 0.25;
+            const angle = 2*Math.PI * i / n;
+            f.geometry.coordinates = [
+              lon + Math.cos(angle)*radius,
+              lat + Math.sin(angle)*radius
+            ];
+          });
+        });
 
-    // Add a circle layer for points
-    map.addLayer({
-      id: 'company-locations',
-      type: 'circle',
-      source: 'locations',
-      paint: {
-        'circle-radius': 6,
-        'circle-color': '#007cbf',
-        'circle-stroke-width': 1,
-        'circle-stroke-color': '#fff'
-      }
-    });
+        // 5) add jittered source
+        map.addSource('locations', { type: 'geojson', data });
 
-    // Popup on click, with clickable email
-    map.on('click', 'company-locations', (e) => {
-      const p = e.features[0].properties;
-      const html = `
-        <strong>Company:</strong> ${p.company}<br>
-        <strong>Union:</strong> ${p.union}<br>
-        <strong>Contact:</strong> ${p.contact}<br>
-        <strong>Phone:</strong> ${p.phone}<br>
-        <strong>Email:</strong> <a href="mailto:${p.email}">${p.email}</a><br>
-        <strong>State:</strong> ${p.state}
-      `;
-      new mapboxgl.Popup()
-        .setLngLat(e.lngLat)
-        .setHTML(html)
-        .addTo(map);
-    });
+        // 6) add circle layer
+        map.addLayer({
+          id: 'company-points',
+          type: 'circle',
+          source: 'locations',
+          paint: {
+            'circle-radius': 6,
+            'circle-color': '#007cbf',
+            'circle-stroke-width': 1,
+            'circle-stroke-color': '#fff'
+          }
+        });
 
-    // Change cursor to pointer on hover
-    map.on('mouseenter', 'company-locations', () => {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-    map.on('mouseleave', 'company-locations', () => {
-      map.getCanvas().style.cursor = '';
-    });
+        // 7) popups on click
+        map.on('click', 'company-points', e => {
+          const p = e.features[0].properties;
+          new mapboxgl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(`
+              <strong>Company:</strong> ${p.company}<br>
+              <strong>Union:</strong> ${p.union}<br>
+              <strong>Contact:</strong> ${p.contact}<br>
+              <strong>Phone:</strong> ${p.phone}<br>
+              <strong>Email:</strong> <a href="mailto:${p.email}">${p.email}</a><br>
+              <strong>State:</strong> ${p.state}
+            `)
+            .addTo(map);
+        });
+
+        // 8) pointer cursor
+        map.on('mouseenter','company-points',() => map.getCanvas().style.cursor='pointer');
+        map.on('mouseleave','company-points',() => map.getCanvas().style.cursor='');
+      })
+      .catch(err => console.error('GeoJSON load error:', err));
   });
 </script>
 </body>
