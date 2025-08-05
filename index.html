@@ -18,6 +18,7 @@
       font-family:Arial,sans-serif; font-size:13px;
       box-shadow:0 1px 4px rgba(0,0,0,0.3);
       max-width:200px;
+      cursor: move;
     }
     #controls b { display:block; margin:6px 0 4px; }
     #controls label { display:block; margin:2px 0; }
@@ -31,8 +32,8 @@
 <body>
   <div id="controls">
     <div id="legend">
-      <span style="background:#1f77b4"></span>Union&nbsp;&nbsp;
-      <span style="background:#9467bd"></span>Non-Union
+      <span style="background:#2ca02c"></span><span style="background:#2ca02c"></span>Union&nbsp;&nbsp;
+      <span style="background:#d62728"></span><span style="background:#d62728"></span>Non-Union
     </div>
     <b>Filter by Union Status</b>
     <label><input type="checkbox" id="unionChk" checked> Union</label>
@@ -54,7 +55,6 @@
         maxBounds: usaBounds,
         projection: 'mercator'
       });
-
       map.on('error', e => console.error('Map error:', e.error.message));
 
       map.on('load', () => {
@@ -101,7 +101,7 @@
               companySelect.appendChild(o);
             });
 
-            // Popups on click
+            // Popups
             map.on('click', 'points', e => {
               const p = e.features[0].properties;
               new mapboxgl.Popup({ maxWidth: '300px' })
@@ -126,35 +126,19 @@
               const showU = unionChk.checked;
               const showN = nonUnionChk.checked;
               const selected = Array.from(companySelect.selectedOptions).map(o => o.value);
-              
-              // Build union status filter
+              // Build union filter
               let statusFilter;
-              if (showU && showN) {
-                // both checked = no status filter
-                statusFilter = null;
-              } else if (showU) {
-                statusFilter = ['==', ['get','union'], 'Union'];
-              } else if (showN) {
-                statusFilter = ['==', ['get','union'], 'Non-Union'];
-              } else {
-                // none checked: match nothing
-                statusFilter = ['==', ['get','union'], '__NONE__'];
-              }
-
+              if (showU && showN) statusFilter = null;
+              else if (showU) statusFilter = ['==',['get','union'],'Union'];
+              else if (showN) statusFilter = ['==',['get','union'],'Non-Union'];
+              else statusFilter = ['==',['get','union'],'__NONE__'];
               // Build company filter
               let companyFilter;
-              const totalCompanies = companySelect.options.length;
-              if (selected.length === 0) {
-                // none selected: match nothing
-                companyFilter = ['==', ['get','company'], '__NONE__'];
-              } else if (selected.length === totalCompanies) {
-                // all selected = no company filter
-                companyFilter = null;
-              } else {
-                companyFilter = ['in', ['get','company'], ['literal', selected]];
-              }
-
-              // Combine filters
+              const total = companySelect.options.length;
+              if (selected.length === 0) companyFilter = ['==',['get','company'],'__NONE__'];
+              else if (selected.length === total) companyFilter = null;
+              else companyFilter = ['in',['get','company'],['literal',selected]];
+              // Apply
               const filters = ['all'];
               if (statusFilter) filters.push(statusFilter);
               if (companyFilter) filters.push(companyFilter);
@@ -165,6 +149,25 @@
             companySelect.addEventListener('change', applyFilters);
             applyFilters();
 
+            // Make #controls draggable
+            const ctrl = document.getElementById('controls');
+            ctrl.addEventListener('mousedown', e => {
+              let startX = e.clientX, startY = e.clientY;
+              const rect = ctrl.getBoundingClientRect();
+              const origX = rect.left, origY = rect.top;
+              function onMouseMove(e) {
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                ctrl.style.left = origX + dx + 'px';
+                ctrl.style.top = origY + dy + 'px';
+              }
+              function onMouseUp() {
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+              }
+              document.addEventListener('mousemove', onMouseMove);
+              document.addEventListener('mouseup', onMouseUp);
+            });
           })
           .catch(e => console.error('GeoJSON load error:', e));
       });
