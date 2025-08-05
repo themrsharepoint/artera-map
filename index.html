@@ -1,15 +1,14 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <title>Artera Locations Map</title>
-  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta charset="utf-8">
+  <title>Artera Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
   <style>
     body { margin: 0; padding: 0; }
-    #map { position: absolute; top: 0; bottom: 0; width: 100%; height: 100vh; }
+    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
   </style>
 </head>
 <body>
@@ -20,46 +19,51 @@
   const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v12',
-    center: [-95, 39],
+    center: [-95.7129, 37.0902], // Center over the U.S.
     zoom: 3.5
   });
 
   map.on('load', () => {
-    map.addSource('locations', {
+    map.addSource('artera', {
       type: 'geojson',
-      data: 'artera_locations_clean.geojson'
+      data: 'https://themrsharepoint.github.io/artera-map/artera_locations_clean.geojson'
     });
 
     map.addLayer({
-      id: 'points',
+      id: 'artera-points',
       type: 'circle',
-      source: 'locations',
+      source: 'artera',
       paint: {
         'circle-radius': 6,
         'circle-color': '#007cbf'
       }
     });
 
-    map.on('click', 'points', (e) => {
+    // Add popups on click
+    map.on('click', 'artera-points', (e) => {
       const props = e.features[0].properties;
-      const html = `
+      const coordinates = e.features[0].geometry.coordinates.slice();
+
+      const popupContent = `
         <strong>Company:</strong> ${props.company}<br>
         <strong>Union:</strong> ${props.union}<br>
         <strong>Contact:</strong> ${props.contact}<br>
-        <strong>Phone:</strong> ${props.phone}<br>
         <strong>Email:</strong> ${props.email}<br>
+        <strong>Phone:</strong> ${props.phone}<br>
         <strong>State:</strong> ${props.state}
       `;
+
       new mapboxgl.Popup()
-        .setLngLat(e.lngLat)
-        .setHTML(html)
+        .setLngLat(coordinates)
+        .setHTML(popupContent)
         .addTo(map);
     });
 
-    map.on('mouseenter', 'points', () => {
+    // Cursor changes on hover
+    map.on('mouseenter', 'artera-points', () => {
       map.getCanvas().style.cursor = 'pointer';
     });
-    map.on('mouseleave', 'points', () => {
+    map.on('mouseleave', 'artera-points', () => {
       map.getCanvas().style.cursor = '';
     });
   });
