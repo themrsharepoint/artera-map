@@ -1,93 +1,154 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
   <title>Artera Company Map</title>
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-  <script src="https://api/mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+  <!-- Mapbox GL JS -->
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+  <!-- Geocoder plugin -->
+  <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+  <link
+    href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css"
+    rel="stylesheet" />
   <style>
     body, html { margin:0; padding:0; height:100%; }
     #map { position:absolute; top:0; bottom:0; width:100%; }
     .mapboxgl-popup-content { font:14px/1.5 Arial, sans-serif; }
-    .popup-table { border-collapse: collapse; width: 100%; }
-    .popup-table td { vertical-align: top; padding: 2px 4px; }
-    .popup-table dt { font-weight: bold; padding-right: 8px; }
+    /* Legend & Controls */
+    #controls {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 10px;
+      border-radius: 4px;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      z-index: 1;
+    }
+    #controls b { display: block; margin-bottom: 5px; }
+    #controls label { display: block; margin-bottom: 3px; }
   </style>
 </head>
 <body>
+<div id="controls">
+  <b>Filter by Union Status</b>
+  <label><input type="checkbox" id="unionChk" checked> Union</label>
+  <label><input type="checkbox" id="nonUnionChk" checked> Non-Union</label>
+</div>
 <div id="map"></div>
 <script>
-  // Your Mapbox public access token
+  // Your Mapbox token
   mapboxgl.accessToken = 'pk.eyJ1IjoibXJzaGFyZXBvaW50IiwiYSI6ImNtZHlwcWdmeTA0cG4yam9peGhhNXg0YXQifQ.JnHCLctXF8nC6rOGmWYd5A';
 
-  // Lock to continental USA
+  // Bounds for continental USA
   const usaBounds = [[-125.0, 24.396308], [-66.885444, 49.384358]];
 
+  // Initialize map
   const map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v11',
+    style: 'mapbox://styles/mapbox/light-v10',
     bounds: usaBounds,
     fitBoundsOptions: { padding: 20 },
     maxBounds: usaBounds,
     projection: 'mercator'
   });
 
+  // Add geocoder (search box)
+  const geocoder = new MapboxGeocoder({ accessToken: mapboxgl.accessToken, mapboxgl });
+  map.addControl(geocoder, 'top-left');
+
   map.on('load', () => {
-    fetch('locationdata.geojson')
-      .then(res => res.json())
-      .then(data => {
-        // Jitter overlapping points
-        const groups = {}; data.features.forEach(f => {
-          (groups[f.properties.state] = groups[f.properties.state]||[]).push(f);
-        });
-        Object.values(groups).forEach(arr => {
-          const n = arr.length;
-          arr.forEach((f,i) => {
-            const [lon, lat] = f.geometry.coordinates;
-            const r = 0.2; const theta = 2 * Math.PI * i / n;
-            f.geometry.coordinates = [lon + Math.cos(theta)*r, lat + Math.sin(theta)*r];
-          });
-        });
+    // Load GeoJSON with clustering enabled
+    map.addSource('locations', {
+      type: 'geojson',
+      data: 'locationdata.geojson',
+      cluster: true,
+      clusterMaxZoom: 14,
+      clusterRadius: 50
+    });
 
-        map.addSource('locations', { type: 'geojson', data });
-        map.addLayer({
-          id: 'company-points', type: 'circle', source: 'locations',
-          paint: {
-            'circle-radius': 6,
-            'circle-color': '#007cbf',
-            'circle-stroke-color': '#ffffff',
-            'circle-stroke-width': 1
-          }
-        });
+    // Cluster circles
+    map.addLayer({
+      id: 'clusters',
+      type: 'circle',
+      source: 'locations',
+      filter: ['has', 'point_count'],
+      paint: {
+        'circle-color': '#FFA500',
+        'circle-radius': ['step', ['get', 'point_count'], 15, 5, 20, 10, 25]
+      }
+    });
 
-        // Popups
-        map.on('click', 'company-points', e => {
-          const p = e.features[0].properties;
-          const html = `
-            <table class="popup-table">
-              <tr><td><strong>Company:</strong></td><td>${p.company}</td></tr>
-              <tr><td><strong>Union:</strong></td><td>${p.union}</td></tr>
-              <tr><td><strong>Contact:</strong></td><td>${p.contact}</td></tr>
-              <tr><td><strong>Phone:</strong></td><td>${p.phone}</td></tr>
-              <tr><td><strong>Email:</strong></td><td><a href=\"mailto:${p.email}\">${p.email}</a></td></tr>
-              <tr><td><strong>State:</strong></td><td>${p.state}</td></tr>
-            </table>
-          `;
-          new mapboxgl.Popup({ maxWidth: '300px' })
-            .setLngLat(e.lngLat)
-            .setHTML(html)
-            .addTo(map);
-        });
+    // Cluster count labels
+    map.addLayer({
+      id: 'cluster-count',
+      type: 'symbol',
+      source: 'locations',
+      filter: ['has', 'point_count'],
+      layout: {
+        'text-field': '{point_count_abbreviated}',
+        'text-font': ['Arial Unicode MS Bold'],
+        'text-size': 12
+      }
+    });
 
-        map.on('mouseenter', 'company-points', () => {
-          map.getCanvas().style.cursor = 'pointer';
-        });
-        map.on('mouseleave', 'company-points', () => {
-          map.getCanvas().style.cursor = '';
-        });
-      })
-      .catch(err => console.error('GeoJSON load error:', err));
+    // Unclustered points
+    map.addLayer({
+      id: 'unclustered-points',
+      type: 'circle',
+      source: 'locations',
+      filter: ['!', ['has', 'point_count']],
+      paint: {
+        'circle-radius': 6,
+        'circle-color': [
+          'match', ['get', 'union'],
+          'Union', '#1f77b4',
+          'Non-Union', '#9467bd',
+          '#888'
+        ],
+        'circle-stroke-width': 1,
+        'circle-stroke-color': '#ffffff'
+      }
+    });
+
+    // Popup on click
+    map.on('click', 'unclustered-points', e => {
+      const p = e.features[0].properties;
+      new mapboxgl.Popup({ maxWidth: '300px' })
+        .setLngLat(e.lngLat)
+        .setHTML(
+          `<strong>Company:</strong> ${p.company}<br>` +
+          `<strong>Union:</strong> ${p.union}<br>` +
+          `<strong>Contact:</strong> ${p.contact}<br>` +
+          `<strong>Phone:</strong> ${p.phone}<br>` +
+          `<strong>Email:</strong> <a href="mailto:${p.email}">${p.email}</a><br>` +
+          `<strong>State:</strong> ${p.state}`
+        )
+        .addTo(map);
+    });
+
+    // Change cursor
+    map.on('mouseenter', 'unclustered-points', () => map.getCanvas().style.cursor = 'pointer');
+    map.on('mouseleave', 'unclustered-points', () => map.getCanvas().style.cursor = '');
+
+    // Filter function
+    function applyFilters() {
+      const showU = document.getElementById('unionChk').checked;
+      const showN = document.getElementById('nonUnionChk').checked;
+      const filter = ['all', ['!', ['has', 'point_count']], [
+        'any',
+        showU && ['==', ['get', 'union'], 'Union'],
+        showN && ['==', ['get', 'union'], 'Non-Union']
+      ].filter(Boolean)];
+      map.setFilter('unclustered-points', filter);
+    }
+
+    // Attach filter events
+    document.getElementById('unionChk').addEventListener('change', applyFilters);
+    document.getElementById('nonUnionChk').addEventListener('change', applyFilters);
   });
 </script>
 </body>
