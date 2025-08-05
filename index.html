@@ -6,146 +6,142 @@
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
   <!-- Mapbox GL JS -->
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-  <link
-    href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css"
-    rel="stylesheet"
-  />
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
   <!-- Geocoder plugin -->
   <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
-  <link
-    href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css"
-    rel="stylesheet"
-  />
+  <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css" rel="stylesheet" />
   <style>
-    /* Fullscreen map */
     html, body { margin:0; padding:0; width:100%; height:100%; }
-    #map { position:absolute; top:0; bottom:0; left:0; right:0; }
-    /* Popup styling */
+    #map { position:absolute; top:0; bottom:0; width:100%; }
     .mapboxgl-popup-content { font:14px/1.5 Arial, sans-serif; }
-    /* Controls panel */
     #controls {
-      position:absolute;
-      top:10px;
-      left:10px;
-      z-index:1;
+      position:absolute; top:10px; left:10px; z-index:1;
       background:rgba(255,255,255,0.95);
-      padding:10px;
-      border-radius:4px;
-      font-family:Arial,sans-serif;
-      font-size:13px;
+      padding:10px; border-radius:4px;
+      font-family:Arial,sans-serif; font-size:13px;
       box-shadow:0 1px 4px rgba(0,0,0,0.3);
+      max-width:200px;
     }
-    #controls b { display:block; margin-bottom:6px; }
-    #controls label { display:block; margin-bottom:4px; }
+    #controls b { display:block; margin:6px 0 4px; }
+    #controls label { display:block; margin:2px 0; }
+    #legend { margin-bottom:8px; }
+    #legend span {
+      display:inline-block; width:12px; height:12px; margin-right:4px; vertical-align:middle;
+    }
+    #companySelect { width:100%; height:80px; }
   </style>
 </head>
 <body>
   <div id="controls">
+    <div id="legend">
+      <span style="background:#1f77b4"></span>Union&nbsp;&nbsp;
+      <span style="background:#9467bd"></span>Non-Union
+    </div>
     <b>Filter by Union Status</b>
     <label><input type="checkbox" id="unionChk" checked> Union</label>
     <label><input type="checkbox" id="nonUnionChk" checked> Non-Union</label>
+    <b>Filter by Company</b>
+    <select id="companySelect" multiple></select>
   </div>
   <div id="map"></div>
   <script>
-    // Mapbox access token
     mapboxgl.accessToken = 'pk.eyJ1IjoibXJzaGFyZXBvaW50IiwiYSI6ImNtZHlwcWdmeTA0cG4yam9peGhhNXg0YXQifQ.JnHCLctXF8nC6rOGmWYd5A';
-
-    // Continental US bounding box
     const usaBounds = [[-125,24.396308],[-66.885444,49.384358]];
 
-    // Initialize map once DOM is ready
     window.onload = () => {
       const map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11',  // use v11 style
+        style: 'mapbox://styles/mapbox/light-v10',
         bounds: usaBounds,
-        fitBoundsOptions: { padding: 20 },
+        fitBoundsOptions: { padding:20 },
         maxBounds: usaBounds,
         projection: 'mercator'
       });
+      map.on('error', e => console.error('Map error:', e.error.message));
 
-      // Debug any map errors
-      map.on('error', (e) => console.error('Map error:', e.error.message));
-
-      // Resize map to ensure full coverage
-      map.on('load', () => {
-        map.resize();
-      });
-
-      // Add geocoder control (search)
+      // add geocoder
       const geocoder = new MapboxGeocoder({ accessToken: mapboxgl.accessToken, mapboxgl });
       map.addControl(geocoder, 'top-left');
 
       map.on('load', () => {
         fetch('locationdata.geojson')
-          .then(r => r.json())
-          .then(data => {
-            // Jitter overlapping points
+          .then(r=>r.json())
+          .then(data=>{
+            // jitter overlapping points
             const groups = {};
-            data.features.forEach(f => {
-              const s = f.properties.state;
-              (groups[s] = groups[s]||[]).push(f);
+            data.features.forEach(f=>{
+              (groups[f.properties.state]=groups[f.properties.state]||[]).push(f);
             });
-            Object.values(groups).forEach(arr => {
-              const n = arr.length;
-              arr.forEach((f,i) => {
-                const [lon, lat] = f.geometry.coordinates;
-                const r = 0.2, angle = 2*Math.PI*i/n;
-                f.geometry.coordinates = [lon+Math.cos(angle)*r, lat+Math.sin(angle)*r];
+            Object.values(groups).forEach(arr=>{
+              const n=arr.length;
+              arr.forEach((f,i)=>{
+                const [lon,lat]=f.geometry.coordinates;
+                const r=0.2,θ=2*Math.PI*i/n;
+                f.geometry.coordinates=[lon+Math.cos(θ)*r,lat+Math.sin(θ)*r];
               });
             });
 
-            // Add source & layer
-            map.addSource('locations', { type: 'geojson', data });
+            map.addSource('locations',{ type:'geojson', data });
             map.addLayer({
-              id: 'points', type: 'circle', source: 'locations',
-              paint: {
-                'circle-radius': 6,
-                'circle-color': [
-                  'match',['get','union'],
-                  'Union','#1f77b4',
-                  'Non-Union','#9467bd',
-                  '#888'
+              id:'points', type:'circle', source:'locations',
+              paint:{
+                'circle-radius':6,
+                'circle-color':['match',['get','union'],
+                  'Union','#1f77b4','Non-Union','#9467bd','#888'
                 ],
-                'circle-stroke-width': 1,
-                'circle-stroke-color': '#fff'
+                'circle-stroke-width':1,'circle-stroke-color':'#fff'
               }
             });
 
-            // Popup on click
-            map.on('click','points', e => {
-              const p = e.features[0].properties;
-              new mapboxgl.Popup({ maxWidth: '300px' })
+            // populate company filter
+            const companySelect = document.getElementById('companySelect');
+            const companies = Array.from(new Set(data.features.map(f=>f.properties.company))).sort();
+            companies.forEach(c=>{
+              const o=document.createElement('option');o.value=c;o.text=c;o.selected=true;
+              companySelect.appendChild(o);
+            });
+
+            // popup
+            map.on('click','points',e=>{
+              const p=e.features[0].properties;
+              new mapboxgl.Popup({ maxWidth:'300px' })
                 .setLngLat(e.lngLat)
                 .setHTML(
-                  `<strong>Company:</strong> ${p.company}<br>` +
-                  `<strong>Union:</strong> ${p.union}<br>` +
-                  `<strong>Contact:</strong> ${p.contact}<br>` +
-                  `<strong>Phone:</strong> ${p.phone}<br>` +
-                  `<strong>Email:</strong> <a href=\"mailto:${p.email}\">${p.email}</a><br>` +
+                  `<strong>Company:</strong> ${p.company}<br>`+
+                  `<strong>Union:</strong> ${p.union}<br>`+
+                  `<strong>Contact:</strong> ${p.contact}<br>`+
+                  `<strong>Phone:</strong> ${p.phone}<br>`+
+                  `<strong>Email:</strong> <a href=\\"mailto:${p.email}\\">${p.email}</a><br>`+
                   `<strong>State:</strong> ${p.state}`
-                )
-                .addTo(map);
+                ).addTo(map);
             });
-            map.on('mouseenter','points',() => map.getCanvas().style.cursor='pointer');
-            map.on('mouseleave','points',() => map.getCanvas().style.cursor='');
+            map.on('mouseenter','points',()=>map.getCanvas().style.cursor='pointer');
+            map.on('mouseleave','points',()=>map.getCanvas().style.cursor='');
 
-            // Filter function
-            const unionChk = document.getElementById('unionChk');
-            const nonUnionChk = document.getElementById('nonUnionChk');
-            function applyFilters() {
-              const showU = unionChk.checked;
-              const showN = nonUnionChk.checked;
-              const filter = ['any'];
-              if (showU) filter.push(['==',['get','union'],'Union']);
-              if (showN) filter.push(['==',['get','union'],'Non-Union']);
-              map.setFilter('points', filter);
+            // filter logic
+            const unionChk=document.getElementById('unionChk');
+            const nonUnionChk=document.getElementById('nonUnionChk');
+            function applyFilters(){
+              const showU=unionChk.checked, showN=nonUnionChk.checked;
+              const selected=Array.from(companySelect.selectedOptions).map(o=>o.value);
+              const filters=['all'];
+              // union status filter
+              const uFilter=['any'];
+              if(showU) uFilter.push(['==',['get','union'],'Union']);
+              if(showN) uFilter.push(['==',['get','union'],'Non-Union']);
+              filters.push(uFilter);
+              // company filter
+              if(selected.length){
+                filters.push(['in',['get','company'],['literal',selected]]);
+              }
+              map.setFilter('points',filters);
             }
-            unionChk.addEventListener('change', applyFilters);
-            nonUnionChk.addEventListener('change', applyFilters);
+            unionChk.addEventListener('change',applyFilters);
+            nonUnionChk.addEventListener('change',applyFilters);
+            companySelect.addEventListener('change',applyFilters);
             applyFilters();
           })
-          .catch(err => console.error('GeoJSON load error:', err));
+          .catch(e=>console.error('GeoJSON load error:',e));
       });
     };
   </script>
