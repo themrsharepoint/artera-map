@@ -7,9 +7,6 @@
   <!-- Mapbox GL JS -->
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
-  <!-- Geocoder plugin -->
-  <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
-  <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css" rel="stylesheet" />
   <style>
     html, body { margin:0; padding:0; width:100%; height:100%; }
     #map { position:absolute; top:0; bottom:0; width:100%; }
@@ -24,11 +21,11 @@
     }
     #controls b { display:block; margin:6px 0 4px; }
     #controls label { display:block; margin:2px 0; }
+    #controls select { width:100%; height:80px; }
     #legend { margin-bottom:8px; }
     #legend span {
       display:inline-block; width:12px; height:12px; margin-right:4px; vertical-align:middle;
     }
-    #companySelect { width:100%; height:80px; }
   </style>
 </head>
 <body>
@@ -51,97 +48,101 @@
     window.onload = () => {
       const map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/light-v10',
+        style: 'mapbox://styles/mapbox/streets-v11',
         bounds: usaBounds,
         fitBoundsOptions: { padding:20 },
         maxBounds: usaBounds,
         projection: 'mercator'
       });
-      map.on('error', e => console.error('Map error:', e.error.message));
 
-      // add geocoder
-      const geocoder = new MapboxGeocoder({ accessToken: mapboxgl.accessToken, mapboxgl });
-      map.addControl(geocoder, 'top-left');
+      map.on('error', e => console.error('Map error:', e.error.message));
 
       map.on('load', () => {
         fetch('locationdata.geojson')
-          .then(r=>r.json())
-          .then(data=>{
-            // jitter overlapping points
+          .then(r => r.json())
+          .then(data => {
+            // Jitter overlapping points
             const groups = {};
-            data.features.forEach(f=>{
-              (groups[f.properties.state]=groups[f.properties.state]||[]).push(f);
+            data.features.forEach(f => {
+              (groups[f.properties.state] = groups[f.properties.state] || []).push(f);
             });
-            Object.values(groups).forEach(arr=>{
-              const n=arr.length;
-              arr.forEach((f,i)=>{
-                const [lon,lat]=f.geometry.coordinates;
-                const r=0.2,θ=2*Math.PI*i/n;
-                f.geometry.coordinates=[lon+Math.cos(θ)*r,lat+Math.sin(θ)*r];
+            Object.values(groups).forEach(arr => {
+              const n = arr.length;
+              arr.forEach((f,i) => {
+                const [lon, lat] = f.geometry.coordinates;
+                const r = 0.2, angle = 2 * Math.PI * i / n;
+                f.geometry.coordinates = [lon + Math.cos(angle) * r, lat + Math.sin(angle) * r];
               });
             });
 
-            map.addSource('locations',{ type:'geojson', data });
+            map.addSource('locations', { type: 'geojson', data });
             map.addLayer({
-              id:'points', type:'circle', source:'locations',
-              paint:{
-                'circle-radius':6,
-                'circle-color':['match',['get','union'],
-                  'Union','#1f77b4','Non-Union','#9467bd','#888'
+              id: 'points', type: 'circle', source: 'locations',
+              paint: {
+                'circle-radius': 6,
+                'circle-color': ['match', ['get', 'union'],
+                  'Union', '#1f77b4',
+                  'Non-Union', '#9467bd',
+                  '#888'
                 ],
-                'circle-stroke-width':1,'circle-stroke-color':'#fff'
+                'circle-stroke-width': 1,
+                'circle-stroke-color': '#fff'
               }
             });
 
-            // populate company filter
+            // Populate company filter
             const companySelect = document.getElementById('companySelect');
-            const companies = Array.from(new Set(data.features.map(f=>f.properties.company))).sort();
-            companies.forEach(c=>{
-              const o=document.createElement('option');o.value=c;o.text=c;o.selected=true;
+            const companies = Array.from(new Set(data.features.map(f => f.properties.company))).sort();
+            companies.forEach(c => {
+              const o = document.createElement('option');
+              o.value = c;
+              o.text = c;
+              o.selected = true;
               companySelect.appendChild(o);
             });
 
-            // popup
-            map.on('click','points',e=>{
-              const p=e.features[0].properties;
-              new mapboxgl.Popup({ maxWidth:'300px' })
+            // Popups on click
+            map.on('click', 'points', e => {
+              const p = e.features[0].properties;
+              new mapboxgl.Popup({ maxWidth: '300px' })
                 .setLngLat(e.lngLat)
                 .setHTML(
-                  `<strong>Company:</strong> ${p.company}<br>`+
-                  `<strong>Union:</strong> ${p.union}<br>`+
-                  `<strong>Contact:</strong> ${p.contact}<br>`+
-                  `<strong>Phone:</strong> ${p.phone}<br>`+
-                  `<strong>Email:</strong> <a href=\\"mailto:${p.email}\\">${p.email}</a><br>`+
+                  `<strong>Company:</strong> ${p.company}<br>` +
+                  `<strong>Union:</strong> ${p.union}<br>` +
+                  `<strong>Contact:</strong> ${p.contact}<br>` +
+                  `<strong>Phone:</strong> ${p.phone}<br>` +
+                  `<strong>Email:</strong> <a href="mailto:${p.email}">${p.email}</a><br>` +
                   `<strong>State:</strong> ${p.state}`
-                ).addTo(map);
+                )
+                .addTo(map);
             });
-            map.on('mouseenter','points',()=>map.getCanvas().style.cursor='pointer');
-            map.on('mouseleave','points',()=>map.getCanvas().style.cursor='');
+            map.on('mouseenter', 'points', () => map.getCanvas().style.cursor = 'pointer');
+            map.on('mouseleave', 'points', () => map.getCanvas().style.cursor = '');
 
-            // filter logic
-            const unionChk=document.getElementById('unionChk');
-            const nonUnionChk=document.getElementById('nonUnionChk');
-            function applyFilters(){
-              const showU=unionChk.checked, showN=nonUnionChk.checked;
-              const selected=Array.from(companySelect.selectedOptions).map(o=>o.value);
-              const filters=['all'];
-              // union status filter
-              const uFilter=['any'];
-              if(showU) uFilter.push(['==',['get','union'],'Union']);
-              if(showN) uFilter.push(['==',['get','union'],'Non-Union']);
-              filters.push(uFilter);
-              // company filter
-              if(selected.length){
-                filters.push(['in',['get','company'],['literal',selected]]);
-              }
-              map.setFilter('points',filters);
+            // Filter logic
+            const unionChk = document.getElementById('unionChk');
+            const nonUnionChk = document.getElementById('nonUnionChk');
+            function applyFilters() {
+              const showU = unionChk.checked;
+              const showN = nonUnionChk.checked;
+              const selected = Array.from(companySelect.selectedOptions).map(o => o.value);
+              const filters = ['all',
+                ['match', ['get', 'union'],
+                  showU && 'Union',
+                  showN && 'Non-Union',
+                  false
+                ],
+                ['in', ['get', 'company'], ['literal', selected]]
+              ];
+              map.setFilter('points', filters);
             }
-            unionChk.addEventListener('change',applyFilters);
-            nonUnionChk.addEventListener('change',applyFilters);
-            companySelect.addEventListener('change',applyFilters);
+            unionChk.addEventListener('change', applyFilters);
+            nonUnionChk.addEventListener('change', applyFilters);
+            companySelect.addEventListener('change', applyFilters);
             applyFilters();
+
           })
-          .catch(e=>console.error('GeoJSON load error:',e));
+          .catch(e => console.error('GeoJSON load error:', e));
       });
     };
   </script>
