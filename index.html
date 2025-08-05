@@ -13,9 +13,9 @@
     #map { position:absolute; top:0; bottom:0; width:100%; }
     .mapboxgl-popup-content { font:14px/1.5 Arial, sans-serif; }
     #controls {
-      position: absolute; top: 10px; left: 10px; z-index:1;
-      background: rgba(255,255,255,0.9); padding:10px; border-radius:4px;
-      font-family: Arial, sans-serif; font-size:13px;
+      position:absolute; top:10px; left:10px; z-index:1;
+      background:rgba(255,255,255,0.9); padding:10px; border-radius:4px;
+      font-family:Arial,sans-serif; font-size:13px;
     }
     #controls b { display:block; margin-bottom:5px }
     #controls label { display:block; margin-bottom:3px }
@@ -31,125 +31,58 @@
   <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoibXJzaGFyZXBvaW50IiwiYSI6ImNtZHlwcWdmeTA0cG4yam9peGhhNXg0YXQifQ.JnHCLctXF8nC6rOGmWYd5A';
 
-    const usaBounds = [[-125.0, 24.396308], [-66.885444, 49.384358]];
+    // Lock to continental USA
+    const usaBounds = [[-125,24.396308],[-66.885444,49.384358]];
 
     const map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/mapbox/light-v10',
       bounds: usaBounds,
-      fitBoundsOptions: { padding: 20 },
+      fitBoundsOptions: { padding:20 },
       maxBounds: usaBounds,
       projection: 'mercator'
     });
 
-    // add search box
+    // Add search box
     const geocoder = new MapboxGeocoder({ accessToken: mapboxgl.accessToken, mapboxgl });
     map.addControl(geocoder, 'top-left');
 
     map.on('load', () => {
-      // load with smaller cluster radius
-      map.addSource('locations', {
-        type: 'geojson',
-        data: 'locationdata.geojson',
-        cluster: true,
-        clusterMaxZoom: 14,
-        clusterRadius: 20    // reduced radius
-      });
+      fetch('locationdata.geojson')
+        .then(r=>r.json())
+        .then(data=>{
+          // jitter overlapping points
+          const groups = {};
+          data.features.forEach(f=>{
+            (groups[f.properties.state]=groups[f.properties.state]||[]).push(f);
+          });
+          Object.values(groups).forEach(arr=>{
+            const n=arr.length;
+            arr.forEach((f,i)=>{
+              const [lon,lat]=f.geometry.coordinates;
+              const r=0.2,θ=2*Math.PI*i/n;
+              f.geometry.coordinates=[lon+Math.cos(θ)*r,lat+Math.sin(θ)*r];
+            });
+          });
 
-      // clusters
-      map.addLayer({
-        id: 'clusters',
-        type: 'circle',
-        source: 'locations',
-        filter: ['has', 'point_count'],
-        paint: {
-          'circle-color': '#FFA500',
-          'circle-radius': ['step', ['get', 'point_count'], 15, 5, 20, 10, 25]
-        }
-      });
+          map.addSource('locations',{ type:'geojson', data });
 
-      // cluster numbers
-      map.addLayer({
-        id: 'cluster-count',
-        type: 'symbol',
-        source: 'locations',
-        filter: ['has', 'point_count'],
-        layout: {
-          'text-field': '{point_count_abbreviated}',
-          'text-font': ['Arial Unicode MS Bold'],
-          'text-size': 12
-        }
-      });
+          map.addLayer({
+            id:'points',
+            type:'circle',
+            source:'locations',
+            paint:{
+              'circle-radius':6,
+              'circle-color':[
+                'match',['get','union'],
+                'Union','#1f77b4',
+                'Non-Union','#9467bd',
+                '#888'
+              ],
+              'circle-stroke-width':1,
+              'circle-stroke-color':'#fff'
+            }
+          });
 
-      // unclustered points
-      map.addLayer({
-        id: 'unclustered-points',
-        type: 'circle',
-        source: 'locations',
-        filter: ['!', ['has', 'point_count']],
-        paint: {
-          'circle-radius': 6,
-          'circle-color': [
-            'match', ['get','union'],
-            'Union', '#1f77b4',
-            'Non-Union', '#9467bd',
-            '#888'
-          ],
-          'circle-stroke-width': 1,
-          'circle-stroke-color': '#fff'
-        }
-      });
-
-      // build popup on click
-      map.on('click', 'unclustered-points', (e) => {
-        const p = e.features[0].properties;
-        new mapboxgl.Popup({ maxWidth: '300px' })
-          .setLngLat(e.lngLat)
-          .setHTML(`
-            <strong>Company:</strong> ${p.company}<br>
-            <strong>Union:</strong> ${p.union}<br>
-            <strong>Contact:</strong> ${p.contact}<br>
-            <strong>Phone:</strong> ${p.phone}<br>
-            <strong>Email:</strong> <a href="mailto:${p.email}">${p.email}</a><br>
-            <strong>State:</strong> ${p.state}
-          `)
-          .addTo(map);
-      });
-
-      // cursor pointer on hover
-      map.on('mouseenter', 'unclustered-points', () => map.getCanvas().style.cursor = 'pointer');
-      map.on('mouseleave', 'unclustered-points', () => map.getCanvas().style.cursor = '');
-
-      // zoom into cluster on click
-      map.on('click', 'clusters', (e) => {
-        const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
-        const clusterId = features[0].properties.cluster_id;
-        map.getSource('locations').getClusterExpansionZoom(clusterId, (err, zoom) => {
-          if (err) return;
-          map.easeTo({ center: features[0].geometry.coordinates, zoom });
-        });
-      });
-
-      // filter logic
-      function applyFilters() {
-        const showU = unionChk.checked;
-        const showN = nonUnionChk.checked;
-        const filter = ['all',
-          ['!', ['has', 'point_count']],
-          ['any',
-            showU && ['==',['get','union'],'Union'],
-            showN && ['==',['get','union'],'Non-Union']
-          ].filter(Boolean)
-        ];
-        map.setFilter('unclustered-points', filter);
-      }
-
-      // wire up checkboxes & call once
-      unionChk.addEventListener('change', applyFilters);
-      nonUnionChk.addEventListener('change', applyFilters);
-      applyFilters();
-    });
-    // end load
-  </script>
-</body>
-</html>
+          // popups
+          map.on('
